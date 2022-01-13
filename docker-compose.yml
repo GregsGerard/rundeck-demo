@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  ank-rundeck:
+    image: ank-rundeck:1.0.0
+    build:
+      context: ./docker/
+    environment:
+      RUNDECK_DATABASE_DRIVER: org.mariadb.jdbc.Driver
+      RUNDECK_DATABASE_USERNAME: rundeck
+      RUNDECK_DATABASE_PASSWORD: rundeck
+      RUNDECK_DATABASE_URL: jdbc:mysql://ank-mysql/rundeck?autoReconnect=true&useSSL=false
+      DB_HOST: ank-mysql
+      DB_DATABASE: sakila
+      DB_USERNAME: sakila
+      DB_PASSWORD: sakila
+    ports:
+      - "4440:4440"
+    volumes:
+      - data:/home/rundeck/server/data
+      - ./config/realm.properties:/home/rundeck/server/config/realm.properties
+
+  ank-mysql:
+    image: mysql:5.7
+    expose:
+      - 3306
+    ports:
+      - "3336:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=rundeck
+      - MYSQL_USER=rundeck
+      - MYSQL_PASSWORD=rundeck
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  ank-php-cli:
+    image: php:7.4.27-cli
+    command: tail -f /dev/null
+
+
+volumes:
+  data:
+  dbdata:
