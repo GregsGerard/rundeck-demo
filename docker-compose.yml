@@ -38,7 +38,33 @@ services:
     image: php:7.4.27-cli
     command: tail -f /dev/null
 
+  ank-elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    container_name: ank-elastic
+    environment:
+      - node.name=ank-elastic
+      - discovery.type=single-node
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+
+  ank-kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_HOSTS: '["http://ank-elastic:9200"]'
+    ports:
+      - 5601:5601
 
 volumes:
   data:
   dbdata:
+  elasticdata:

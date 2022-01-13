@@ -83,3 +83,4 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
 
 USER rundeck
 RUN git clone https://github.com/wako057/linuxinit.git && linuxinit/init.sh
+RUN ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
